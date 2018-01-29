@@ -1,4 +1,6 @@
+require 'bundler/setup'
 require 'curses'
+require 'syntax/convertors/html'
 
 file_name = ARGV[0]
 unless file_name

@@ -1,12 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    curses (1.2.4)
     syntax (1.2.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  curses
   syntax
 
 BUNDLED WITH
