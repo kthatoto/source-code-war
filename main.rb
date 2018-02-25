@@ -11,7 +11,7 @@ lines = file.each_line.to_a
 
 Curses.init_screen
 Curses.start_color
-# Curses.use_default_colors
+Curses.use_default_colors
 
 offset = (Curses.lines - lines.count) / 2
 (puts "file lines is larger than screen hight"; exit) if offset < 0
@@ -45,17 +45,13 @@ Curses.noecho
 while true
   key = Curses.getch
   current_position = {y: Curses.stdscr.cury, x: Curses.stdscr.curx}
-  case key
-  when 'q'
-    break
-  when 'h'
-    Curses.setpos(current_position[:y], current_position[:x] - 1)
-  when 'j'
-    Curses.setpos(current_position[:y] + 1, current_position[:x])
-  when 'k'
-    Curses.setpos(current_position[:y] - 1, current_position[:x])
-  when 'l'
-    Curses.setpos(current_position[:y], current_position[:x] + 1)
+  break if key == 'q'
+  move_chars = {h: {y: 0, x: -1}, j: {y: 1, x: 0}, k: {y: -1, x: 0}, l: {y: 0, x: 1}}
+  if move_chars[key.to_sym]
+    Curses.setpos(
+      current_position[:y] + move_chars[key.to_sym][:y],
+      current_position[:x] + move_chars[key.to_sym][:x],
+    )
   end
 
   if Curses.inch != 32
