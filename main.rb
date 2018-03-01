@@ -22,6 +22,8 @@ offset = (Curses.lines - lines.count) / 2
 #   Curses::COLOR_MAGENTA, Curses::COLOR_RED, Curses::COLOR_WHITE, Curses::COLOR_YELLOW
 # ]
 
+#参考 https://docs.ruby-lang.org/ja/2.0.0/class/Curses.html#M_COLOR_CONTENT
+
 ###=======================###
 
 #=init colors=#
@@ -40,23 +42,32 @@ lines.each{|line|
     end
   }
 }
-
 Curses.noecho
 while true
   key = Curses.getch
   current_position = {y: Curses.stdscr.cury, x: Curses.stdscr.curx}
   break if key == 'q'
-  move_chars = {h: {y: 0, x: -1}, j: {y: 1, x: 0}, k: {y: -1, x: 0}, l: {y: 0, x: 1}}
+  move_chars = {
+    h: {y: 0, x: -1, direction: '<'},
+    j: {y: 1, x: 0,  direction: 'v'},
+    k: {y: -1, x: 0, direction: '^'},
+    l: {y: 0, x: 1,  direction: '>'}
+  }
   if move_chars[key.to_sym]
-    Curses.setpos(
-      current_position[:y] + move_chars[key.to_sym][:y],
-      current_position[:x] + move_chars[key.to_sym][:x],
-    )
+    after_move_position = {
+      y: current_position[:y] + move_chars[key.to_sym][:y],
+      x: current_position[:x] + move_chars[key.to_sym][:x],
+    }
+    Curses.delch
+    Curses.insch(" ")
+    Curses.setpos(after_move_position[:y], after_move_position[:x])
+    if Curses.inch != 32
+      Curses.setpos(current_position[:y], current_position[:x])
+    end
+    Curses.delch
+    Curses.insch(move_chars[key.to_sym][:direction])
   end
 
-  if Curses.inch != 32
-    Curses.setpos(current_position[:y], current_position[:x])
-  end
 end
 
 Curses.close_screen
