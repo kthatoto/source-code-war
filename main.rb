@@ -14,7 +14,8 @@ Curses.start_color
 Curses.use_default_colors
 
 offset = (Curses.lines - lines.count) / 2
-(puts "file lines is larger than screen hight"; exit) if offset < 0
+# TODO: when file size is larger than terminal height
+# (puts "file lines is larger than screen hight"; exit) if offset < 0
 
 ###playground###==========###
 # $col_a = [
