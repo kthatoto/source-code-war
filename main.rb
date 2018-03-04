@@ -34,7 +34,7 @@ Curses.init_pair(1, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
 Curses.setpos(offset, 0)
 lines.each{|line|
   line.chars.each{|char|
-    if char.match(/[0-9A-Z]/)
+    if char.match(/[0-9]/)
       Curses.attron(Curses.color_pair(1))
       Curses.addch(char)
       Curses.attroff(Curses.color_pair(1))
