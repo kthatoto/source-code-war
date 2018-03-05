@@ -1,19 +1,27 @@
 require 'bundler/setup'
 require 'curses'
-
-file_name = ARGV[0]
-
-(puts "file name is required"; exit) unless file_name
-(puts "#{file_name} not exists"; exit) unless File.exist?(file_name)
-
-file = File.read(file_name)
-lines = file.each_line.to_a
+Dir[File.expand_path('../classes', __FILE__) << '/*.rb'].each{|file| require file}
+file_path = ARGV[0]
+(puts "file name is required"; exit) unless file_path
+(puts "#{file_path} not exists"; exit) unless File.exist?(file_path)
 
 Curses.init_screen
+window = Window.new(file_path)
+window.draw
+Curses.refresh
+Curses.getch
+Curses.close_screen
+exit
+
+
+# file = File.read(file_name)
+# lines = file.each_line.to_a
+
+# Curses.init_screen
 Curses.start_color
 Curses.use_default_colors
 
-offset = (Curses.lines - lines.count) / 2
+# offset = (Curses.lines - lines.count) / 2
 # TODO: when file size is larger than terminal height
 # (puts "file lines is larger than screen hight"; exit) if offset < 0
 
@@ -23,12 +31,13 @@ offset = (Curses.lines - lines.count) / 2
 #   Curses::COLOR_MAGENTA, Curses::COLOR_RED, Curses::COLOR_WHITE, Curses::COLOR_YELLOW
 # ]
 
-#参考 https://docs.ruby-lang.org/ja/2.0.0/class/Curses.html#M_COLOR_CONTENT
+#[reference] https://docs.ruby-lang.org/ja/2.0.0/class/Curses.html#M_COLOR_CONTENT
 
 ###=======================###
 
 #=init colors=#
 Curses.init_pair(1, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
+Curses.init_pair(2, Curses::COLOR_RED, Curses::COLOR_YELLOW)
 #=============#
 
 Curses.setpos(offset, 0)
@@ -38,6 +47,10 @@ lines.each{|line|
       Curses.attron(Curses.color_pair(1))
       Curses.addch(char)
       Curses.attroff(Curses.color_pair(1))
+    elsif char.match(/[C]/)
+      Curses.attron(Curses.color_pair(2))
+      Curses.addch(char)
+      Curses.attroff(Curses.color_pair(2))
     else
       Curses.addch(char)
     end
