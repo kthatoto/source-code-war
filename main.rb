@@ -6,22 +6,22 @@ file_path = ARGV[0]
 (puts "#{file_path} not exists"; exit) unless File.exist?(file_path)
 
 Curses.init_screen
-window = Window.new(file_path)
-window.draw
-Curses.refresh
-Curses.getch
-Curses.close_screen
-exit
-
-
-# file = File.read(file_name)
-# lines = file.each_line.to_a
-
-# Curses.init_screen
+Curses.noecho
 Curses.start_color
 Curses.use_default_colors
 
-# offset = (Curses.lines - lines.count) / 2
+field = Field.new(file_path)
+player = Player.new(field)
+loop do
+  field.draw
+  player.draw
+  key = player.getch
+  break if key == ?q
+  player.command(key) if key
+  sleep 0.01
+end
+Curses.close_screen
+
 # TODO: when file size is larger than terminal height
 # (puts "file lines is larger than screen hight"; exit) if offset < 0
 
@@ -36,52 +36,6 @@ Curses.use_default_colors
 ###=======================###
 
 #=init colors=#
-Curses.init_pair(1, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
-Curses.init_pair(2, Curses::COLOR_RED, Curses::COLOR_YELLOW)
+# Curses.init_pair(1, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
+# Curses.init_pair(2, Curses::COLOR_RED, Curses::COLOR_YELLOW)
 #=============#
-
-Curses.setpos(offset, 0)
-lines.each{|line|
-  line.chars.each{|char|
-    if char.match(/[0-9]/)
-      Curses.attron(Curses.color_pair(1))
-      Curses.addch(char)
-      Curses.attroff(Curses.color_pair(1))
-    elsif char.match(/[C]/)
-      Curses.attron(Curses.color_pair(2))
-      Curses.addch(char)
-      Curses.attroff(Curses.color_pair(2))
-    else
-      Curses.addch(char)
-    end
-  }
-}
-Curses.noecho
-while true
-  key = Curses.getch
-  current_position = {y: Curses.stdscr.cury, x: Curses.stdscr.curx}
-  break if key == 'q'
-  move_chars = {
-    h: {y: 0, x: -1, direction: '<'},
-    j: {y: 1, x: 0,  direction: 'v'},
-    k: {y: -1, x: 0, direction: '^'},
-    l: {y: 0, x: 1,  direction: '>'}
-  }
-  if move_chars[key.to_sym]
-    after_move_position = {
-      y: current_position[:y] + move_chars[key.to_sym][:y],
-      x: current_position[:x] + move_chars[key.to_sym][:x],
-    }
-    Curses.delch
-    Curses.insch(" ")
-    Curses.setpos(after_move_position[:y], after_move_position[:x])
-    if Curses.inch != 32
-      Curses.setpos(current_position[:y], current_position[:x])
-    end
-    Curses.delch
-    Curses.insch(move_chars[key.to_sym][:direction])
-  end
-
-end
-
-Curses.close_screen
