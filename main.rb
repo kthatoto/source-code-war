@@ -15,9 +15,10 @@ player = Player.new(field)
 loop do
   field.draw
   player.draw
-  key = player.getch
-  break if key == ?q
-  player.command(key) if key
+  if key = player.getch
+    break if key == ?q
+    player.command(key)
+  end
   sleep 0.01
 end
 Curses.close_screen
