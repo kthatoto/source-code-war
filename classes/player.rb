@@ -23,17 +23,26 @@ class Player
     @window.setpos(@posy, @posx)
     @window.delch
     @window.insch(@@directions[@direction][:direction])
-    @window.refresh
   end
 
   def command(key)
     if move = @@directions[@@move_chars[key.to_sym]]
-      if @field.blank_pos?(@posy + move[:y], @posx + move[:x])
+      if @field.exists_space?(@posy + move[:y], @posx + move[:x])
         @posy += move[:y]
         @posx += move[:x]
       end
       @window.delch
       @direction = @@move_chars[key.to_sym]
+    end
+    if key == "c"
+      if @field.exists_space?(@posy, @posx)
+        `echo c >> log.txt`
+      end
+    end
+    if key == "d"
+      if @field.exists_space?(@posy, @posx)
+        `echo d >> log.txt`
+      end
     end
   end
 end

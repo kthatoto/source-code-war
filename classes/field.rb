@@ -2,8 +2,8 @@ class Field
   def initialize(file_path)
     @file_path = file_path
     load_file
-    @offset = (Curses.lines - @lines.count) / 2
     @window = Curses::Window.new(Curses.lines, Curses.cols, 0, 0)
+    @offset = (Curses.lines - @lines.count) / 2
   end
   def load_file
     file = File.read(@file_path)
@@ -22,7 +22,8 @@ class Field
   def get_bottom_posy
     return @offset + @lines.count
   end
-  def blank_pos?(y, x)
+  def exists_space?(y, x)
+    return true if y - @offset < 0
     !(@lines[y - @offset] && @lines[y - @offset].chars[x])
   end
 end
